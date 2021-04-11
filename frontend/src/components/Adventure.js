@@ -27,7 +27,16 @@ function Adventure(props) {
     
     const foundKnight = props.knights.find(knight => knight.id === id)
 
+    const randomQuestion = () => {
+        const id = Math.floor(Math.random() * props.questions.length)
+
+        return id
+    }
+
+    let currentQuestion = props.questions.find(question => question.id === randomQuestion())
+
     useEffect(() => {
+        props.wipeStore()
         axios.get('/api/v1/questions')
             .then(res => res.data.map(question => props.addQuestion(question)))
     }, []);
@@ -77,7 +86,7 @@ function Adventure(props) {
 
     const handleQuestionClick = (event) => {
         setAnswered(true) 
-        event.target.value === props.questions[0].correct_answer ? levelUp() : wrongAnswer();
+        event.target.value === currentQuestion.correct_answer ? levelUp() : wrongAnswer();
     }
 
     const wrongAnswer = () => {
@@ -86,12 +95,12 @@ function Adventure(props) {
 
     const readQuestion = () => {
         return <div className="Question">
-            <h3>{props.questions[0].question_text}</h3>
+            <h3>{currentQuestion.question_text}</h3>
 
-            <button onClick={handleQuestionClick} value={props.questions[0].answer_one}>{props.questions[0].answer_one}</button>
-            <button onClick={handleQuestionClick} value={props.questions[0].answer_two}>{props.questions[0].answer_two}</button>
-            <button onClick={handleQuestionClick} value={props.questions[0].answer_three}>{props.questions[0].answer_three}</button>
-            <button onClick={handleQuestionClick} value={props.questions[0].answer_four}>{props.questions[0].answer_four}</button>
+            <button onClick={handleQuestionClick} value={currentQuestion.answer_one}>{currentQuestion.answer_one}</button>
+            <button onClick={handleQuestionClick} value={currentQuestion.answer_two}>{currentQuestion.answer_two}</button>
+            <button onClick={handleQuestionClick} value={currentQuestion.answer_three}>{currentQuestion.answer_three}</button>
+            <button onClick={handleQuestionClick} value={currentQuestion.answer_four}>{currentQuestion.answer_four}</button>
         </div>
     }
 
@@ -104,6 +113,7 @@ function Adventure(props) {
 
     const resetQuest = () => {
         setAnswered(false)
+        currentQuestion = props.questions.find(question => question.id === randomQuestion())
     }
 
     const [encounterId] = useState(createEncounter())
@@ -117,7 +127,7 @@ function Adventure(props) {
 
                 {answered ? null : <EncounterChooser id={encounterId} />}
                 
-                <div>{answered ? handleAnswer() : props.questions[0] ? readQuestion() : null}</div>
+                <div>{answered ? handleAnswer() : currentQuestion ? readQuestion() : null}</div>
 
         </div>
     )

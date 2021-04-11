@@ -12,13 +12,14 @@ function knightReducer(state = initialState, action) {
                 knights: [...state.knights, action.payload]
             });
         case WIPE_STORE:
-            state = {...state, knights: []};
+            state = {knights:[], questions:[]};
         case DELETE_KNIGHT:
             return {...state, knights: state.knights.filter(knight => knight.id !== action.payload)};
         case ADD_QUESTION:
+            if (!state.questions.includes(action.payload)){
             return Object.assign({}, state, {
                 questions: [...state.questions, action.payload]
-            })
+            })}
         default:
             return state;
     }
