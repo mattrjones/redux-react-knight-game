@@ -8,9 +8,10 @@ const initialState = {
 function knightReducer(state = initialState, action) {
     switch(action.type) {
         case ADD_KNIGHT:
+            if (!state.knights.includes(action.payload)){
             return Object.assign({}, state, {
                 knights: [...state.knights, action.payload]
-            });
+            })}
         case WIPE_STORE:
             state = {knights:[], questions:[]};
         case DELETE_KNIGHT:

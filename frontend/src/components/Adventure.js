@@ -27,13 +27,7 @@ function Adventure(props) {
     
     const foundKnight = props.knights.find(knight => knight.id === id)
 
-    const randomQuestion = () => {
-        const id = Math.floor(Math.random() * props.questions.length)
-
-        return id
-    }
-
-    let currentQuestion = props.questions.find(question => question.id === randomQuestion())
+    let currentQuestion = props.questions.find(question => question.id === Math.floor(Math.random() * props.questions.length))
 
     useEffect(() => {
         props.wipeStore()
@@ -113,7 +107,15 @@ function Adventure(props) {
 
     const resetQuest = () => {
         setAnswered(false)
-        currentQuestion = props.questions.find(question => question.id === randomQuestion())
+        props.wipeStore()
+        axios.get('/api/v1/questions')
+            .then(res => res.data.map(question => props.addQuestion(question)))
+
+        axios.get('/api/v1/knights')
+            .then(res => res.data.map(knight => props.addKnightRedux(knight)))
+
+        currentQuestion = props.questions[Math.floor(Math.random() * props.questions.length)]
+        console.log(currentQuestion);
     }
 
     const [encounterId] = useState(createEncounter())
