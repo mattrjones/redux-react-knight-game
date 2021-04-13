@@ -6,23 +6,6 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-Knight.create(
-    name: "Sir Gawain",
-    trait: "brave",
-    attack: 7,
-    defense: 3,
-    level: 1
-)
-
-Question.create(
-    question_text: "How many Harry Potter books are there?",
-    answer_one: "1",
-    answer_two: "4",
-    answer_three: "6",
-    answer_four: "7",
-    correct_answer: "7"
-)
-
 Question.create(
 	question_text: "Add, subtract, multiply, and divide are the four _______ of mathematics",
 	answer_one: "Steps",
