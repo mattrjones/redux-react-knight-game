@@ -1,14 +1,13 @@
-import React, { useState, useEffect} from 'react';
+import React, { useEffect} from 'react';
 import axios from 'axios';
 import KnightCreator from './KnightCreator';
 import Knight from './Knight'
 import { connect } from "react-redux"
 import { addKnightRedux, wipeStore, deleteKnight } from "../redux/actions"
-import knightReducer from '../redux/reducers/knightReducer';
 
 const mapStateToProps = state => {
-    const { knights } = state
-    return { knights }
+    const { data, busySignal } = state
+    return { data, busySignal }
 }
 
 const mapDispatchToProps = dispatch => {
@@ -54,8 +53,8 @@ function KnightsList(props) {
     }
 
     const showKnights = () => {  
-        return props.knights.map((knight) => (
-             <Knight knight={knight} deleteKnight={deleteKnight}/>
+        return props.data.knights.map((knight) => (
+             <div key={knight.name}><Knight knight={knight} deleteKnight={deleteKnight}/></div>
         ))
     }
 

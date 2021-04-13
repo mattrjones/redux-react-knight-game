@@ -2,12 +2,11 @@ import axios from 'axios';
 import {useState, useEffect } from 'react'
 import EncounterChooser from './EncounterChooser';
 import { connect } from "react-redux"
-import knightReducer from '../redux/reducers/knightReducer';
-import { addKnightRedux, wipeStore, deleteKnight, addQuestion } from "../redux/actions"
+import { addKnightRedux, wipeStore, deleteKnight, addQuestion, loadQuestions, loadKnights } from "../redux/actions"
 
 const mapStateToProps = state => {
-    const { knights, questions } = state
-    return { knights, questions }
+    const { data, busySignal } = state
+    return { data, busySignal }
 }
 
 const mapDispatchToProps = dispatch => {
@@ -15,7 +14,9 @@ const mapDispatchToProps = dispatch => {
         addKnightRedux: knightToAdd => dispatch(addKnightRedux(knightToAdd)),
         wipeStore: () => dispatch(wipeStore()),
         deleteKnight: knightToRemove => dispatch(deleteKnight(knightToRemove)),
-        addQuestion: questionToAdd => dispatch(addQuestion(questionToAdd))
+        addQuestion: questionToAdd => dispatch(addQuestion(questionToAdd)),
+        loadQuestions: () => dispatch(loadQuestions()),
+        loadKnights: () => dispatch(loadKnights())
     }
 }
 
@@ -25,20 +26,18 @@ function Adventure(props) {
 
     const [success, setSuccess] = useState(false)
     
-    const foundKnight = props.knights.find(knight => knight.id === id)
+    const foundKnight = props.data.knights.find(knight => knight.id === id)
 
-    let currentQuestion = props.questions.find(question => question.id === Math.floor(Math.random() * props.questions.length))
+    const randomQuestion = props.data.questions[Math.floor(Math.random() * props.data.questions.length)]
+
+    const currentQuestion = randomQuestion
 
     useEffect(() => {
-        props.wipeStore()
-        axios.get('/api/v1/questions')
-            .then(res => res.data.map(question => props.addQuestion(question)))
+        props.loadQuestions()
     }, []);
 
     useEffect(() => {
-        props.wipeStore()
-        axios.get('/api/v1/knights')
-            .then(res => res.data.map(knight => props.addKnightRedux(knight)))
+        props.loadKnights()
     }, []);
 
 
@@ -46,7 +45,7 @@ function Adventure(props) {
 
         setSuccess(true)
 
-        const oldKnight = props.knights.find(knight => knight.id === id)
+        const oldKnight = props.data.knights.find(knight => knight.id === id)
 
         axios.put( 'http://localhost:3001/api/v1/knights/' + id, {
             knight: {
@@ -58,7 +57,7 @@ function Adventure(props) {
             }
         })
         .then(response => {
-            const knightsList = props.knights;
+            const knightsList = props.data.knights;
             const isKnight = (element) => element === id
             knightsList[knightsList.findIndex(isKnight)] = {oldKnight}
             addKnightRedux(knightsList)
@@ -107,15 +106,8 @@ function Adventure(props) {
 
     const resetQuest = () => {
         setAnswered(false)
-        props.wipeStore()
-        axios.get('/api/v1/questions')
-            .then(res => res.data.map(question => props.addQuestion(question)))
-
-        axios.get('/api/v1/knights')
-            .then(res => res.data.map(knight => props.addKnightRedux(knight)))
-
-        currentQuestion = props.questions[Math.floor(Math.random() * props.questions.length)]
-        console.log(currentQuestion);
+        props.loadQuestions()
+        props.loadKnights()
     }
 
     const [encounterId] = useState(createEncounter())

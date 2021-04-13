@@ -1,4 +1,4 @@
-import { ADD_KNIGHT, DELETE_KNIGHT, WIPE_STORE, ADD_QUESTION } from "../actions.js"
+import { ADD_KNIGHT, DELETE_KNIGHT, WIPE_STORE, ADD_QUESTION, LOAD_QUESTIONS, LOAD_KNIGHTS } from "../actions.js"
 
 const initialState = {
     knights: [],
@@ -21,6 +21,10 @@ function knightReducer(state = initialState, action) {
             return Object.assign({}, state, {
                 questions: [...state.questions, action.payload]
             })}
+        case LOAD_QUESTIONS: 
+            return {...state, questions: action.payload}
+        case LOAD_KNIGHTS: 
+            return {...state, knights: action.payload}
         default:
             return state;
     }

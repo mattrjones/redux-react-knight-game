@@ -5,7 +5,11 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { addKnightRedux } from "./redux/actions";
 import { Provider } from 'react-redux';
-import store from './redux/store'
+import thunk from 'redux-thunk'
+import reducer from './redux'
+import { createStore, applyMiddleware } from 'redux'
+
+const store = createStore(reducer, applyMiddleware(thunk));
 
 window.store = store;
 window.addKnightRedux = addKnightRedux;
